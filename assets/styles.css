@@ -157,3 +157,64 @@
 @media (max-width: 680px) and (prefers-reduced-motion: no-preference) {
   .motion-enabled .work-card.animate-now { animation-duration: 1.55s; }
 }
+
+
+/* Reusable scroll animations v4: every viewport re-entry replays text and imagery.
+   Text remains readable when a section is outside the viewport or scripting fails. */
+@keyframes emonInnerFloat {
+  from { opacity:.25; transform:translate3d(0,40px,0); filter:blur(3px) }
+  to { opacity:1; transform:translateZ(0); filter:blur(0) }
+}
+@keyframes emonVisualReveal {
+  from { opacity:.2; transform:translate3d(0,48px,0) scale(.94); filter:blur(4px) }
+  to { opacity:1; transform:translateZ(0) scale(1); filter:blur(0) }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Disable the one-shot homepage animation unless the hero is in view. */
+  .motion-enabled .hero .hero-heading .outline,
+  .motion-enabled .hero .hero-heading .filled,
+  .motion-enabled .hero .hero-img,
+  .motion-enabled .hero .hero-sub,
+  .motion-enabled .hero .hero-social,
+  .motion-enabled .hero .hero-bottom {
+    animation-name:none;
+  }
+  .motion-enabled .hero.motion-replay .hero-heading .outline { animation-name:emonNameOutline }
+  .motion-enabled .hero.motion-replay .hero-heading .filled { animation-name:emonNameFilled }
+  .motion-enabled .hero.motion-replay .hero-img { animation-name:emonPortraitStage }
+  .motion-enabled .hero.motion-replay .hero-sub,
+  .motion-enabled .hero.motion-replay .hero-social,
+  .motion-enabled .hero.motion-replay .hero-bottom { animation-name:emonIntroSlide }
+
+  /* Restart nested text and visuals together with their parent section. */
+  .motion-enabled .section-head.animate-now .section-caption {
+    animation:emonInnerFloat 1.45s .27s both cubic-bezier(.2,.75,.25,1);
+  }
+  .motion-enabled .work-card.animate-now .work-visual > * {
+    animation:emonVisualReveal 1.5s .3s both cubic-bezier(.2,.75,.25,1);
+  }
+  .motion-enabled .work-card.animate-now .work-info {
+    animation:emonInnerFloat 1.4s .28s both cubic-bezier(.2,.75,.25,1);
+  }
+  .motion-enabled .service-rows.animate-now .service-item,
+  .motion-enabled .exp-list.animate-now .exp-row,
+  .motion-enabled .skill-cloud.animate-now .skill-tag,
+  .motion-enabled .language-row.animate-now > div {
+    animation:emonInnerFloat 1.35s both cubic-bezier(.2,.75,.25,1);
+  }
+  .motion-enabled .service-rows.animate-now .service-item:nth-child(2),
+  .motion-enabled .exp-list.animate-now .exp-row:nth-child(2),
+  .motion-enabled .skill-cloud.animate-now .skill-tag:nth-child(3),
+  .motion-enabled .language-row.animate-now > div:nth-child(2) {animation-delay:.14s}
+  .motion-enabled .service-rows.animate-now .service-item:nth-child(3),
+  .motion-enabled .exp-list.animate-now .exp-row:nth-child(3),
+  .motion-enabled .skill-cloud.animate-now .skill-tag:nth-child(4),
+  .motion-enabled .language-row.animate-now > div:nth-child(3) {animation-delay:.28s}
+  .motion-enabled .language-row.animate-now > div:nth-child(4),
+  .motion-enabled .skill-cloud.animate-now .skill-tag:nth-child(5) {animation-delay:.38s}
+  .motion-enabled .contact .reveal.animate-now h2,
+  .motion-enabled .contact .reveal.animate-now p,
+  .motion-enabled .contact .reveal.animate-now .contact-links {
+    animation:emonInnerFloat 1.5s .15s both cubic-bezier(.2,.75,.25,1);
+  }
+}
