@@ -103,3 +103,57 @@
  .motion-enabled .reveal.animate-now,.motion-enabled .work-card.animate-now{animation:none!important}
  .hero-img{transform:translateX(-50%)}
 }
+
+
+/* Animation pacing v3: slightly slower, smoother cinematic transitions.
+   Keeps content visible by default and honors reduced-motion settings. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-heading .outline {
+    animation-duration: 1.55s;
+    animation-delay: .12s;
+  }
+  .hero-heading .filled {
+    animation-duration: 1.7s;
+    animation-delay: .36s;
+  }
+  .hero-img {
+    animation-duration: 2.1s;
+    animation-delay: .28s;
+  }
+  .hero-sub {
+    animation-duration: 1.55s;
+    animation-delay: .76s;
+  }
+  .hero-social {
+    animation-duration: 1.45s;
+    animation-delay: 1.05s;
+  }
+  .hero-bottom {
+    animation-duration: 1.35s;
+    animation-delay: 1.35s;
+  }
+  .motion-enabled .reveal.animate-now {
+    animation-duration: 1.55s;
+  }
+  .motion-enabled .work-card.animate-now {
+    animation-duration: 1.7s;
+  }
+  .motion-enabled .service-rows.animate-now,
+  .motion-enabled .exp-list.animate-now {
+    animation-duration: 1.55s;
+  }
+  .section-head.animate-now .section-title {
+    animation-duration: 1.45s;
+    animation-delay: .12s;
+  }
+  .work-visual .mini-ui, .work-visual .mini-paper {
+    transition-duration: .95s;
+  }
+  .skill-tag {
+    transition-duration: .55s;
+  }
+  .scroll-cue span { animation-duration: 2.2s; }
+}
+@media (max-width: 680px) and (prefers-reduced-motion: no-preference) {
+  .motion-enabled .work-card.animate-now { animation-duration: 1.55s; }
+}
