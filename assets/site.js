@@ -44,16 +44,26 @@
     }
 
     function exit(el) {
-      // Content stays visible because CSS never hides an unanimated .reveal.
-      // Clear BOTH classes so scrolling back into view triggers the animation again.
+      // No hidden state: reset animation classes only, never the content itself.
       el.classList.remove('animate-now', 'visible');
+    }
+
+    function isFullyOutside(el) {
+      const rect = el.getBoundingClientRect();
+      return rect.bottom < -60 || rect.top > window.innerHeight + 60;
+    }
+
+    function rearmOffscreenSections() {
+      sections.forEach(el => {
+        if (el.classList.contains('visible') && isFullyOutside(el)) exit(el);
+      });
     }
 
     if ('IntersectionObserver' in window) {
       const sectionObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) enter(entry.target);
-          else exit(entry.target);
+          else if (isFullyOutside(entry.target)) exit(entry.target);
         });
       }, { threshold: 0, rootMargin: '-5% 0px -9% 0px' });
       sections.forEach(section => sectionObserver.observe(section));
@@ -91,6 +101,7 @@
     let ticking = false;
     function updatePortrait() {
       ticking = false;
+      rearmOffscreenSections();
       if (!portrait || !canAnimate) return;
       const scroll = Math.max(0, window.scrollY);
       if (scroll < 850) {
