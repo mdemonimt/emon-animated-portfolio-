@@ -1,0 +1,9 @@
+const $=id=>document.getElementById(id);
+function clean(s){return s.replace(/\r\n?/g,'\n').split('\n').map(line=>line.replace(/\t/g,' ').replace(/ {2,}/g,' ').trim()).join('\n').replace(/\n{3,}/g,'\n\n').trim()}
+function value(){return $('source').value}
+function update(){const body=value(),words=body.trim()?body.trim().split(/\s+/u).length:0;$('words').textContent=words;$('characters').textContent=[...body].length;$('lines').textContent=body?body.split(/\r?\n/).length:0;const rtl=$('direction').value==='rtl';$('dirlabel').textContent=rtl?'RTL':'LTR';$('preview').dir=rtl?'rtl':'ltr';$('preview').style.lineHeight=$('spacing').value;$('preview-title').textContent=$('title').value.trim()||'BUSINESS DOCUMENT';$('preview-body').textContent=body||'Your document preview appears here as you type.'}
+['title','source'].forEach(id=>$(id).addEventListener('input',update));['direction','spacing'].forEach(id=>$(id).addEventListener('change',update));
+$('clean').onclick=()=>{let before=value(),after=clean(before);$('source').value=after;update();$('message').textContent=before===after?'Text is already consistently spaced.':'Extra spaces and blank lines cleaned. Your wording has been preserved.'};
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText((($('title').value.trim()||'BUSINESS DOCUMENT')+'\n\n'+value()).trim());$('message').textContent='Document copied to clipboard.'}catch(_){$('message').textContent='Clipboard access unavailable. Select the text and copy manually.'}};
+$('download').onclick=()=>{let text=(($('title').value.trim()||'BUSINESS DOCUMENT')+'\n\n'+value()).trim();let blob=new Blob(['\uFEFF',text],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='formatted_document.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+$('print').onclick=()=>window.print();update();
