@@ -30,7 +30,7 @@
       if (!hasMotion) return;
       if (el.classList.contains('work-card')) {
         const cards = [...document.querySelectorAll('.work-card')];
-        el.style.setProperty('--motion-delay', String((cards.indexOf(el) % 2) * 115) + 'ms');
+        el.style.setProperty('--motion-delay', String((cards.indexOf(el) % 2) * 220) + 'ms');
       }
       el.classList.add('animate-now');
       el.addEventListener('animationend', (e) => {
