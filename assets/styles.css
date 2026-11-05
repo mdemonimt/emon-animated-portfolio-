@@ -40,3 +40,66 @@
   from {opacity:.88; transform:translateY(12px)}
   to {opacity:1; transform:translateY(0)}
 }
+
+
+/* Animated portfolio v2: cinematic motion without hiding content */
+@keyframes emonNameOutline {
+ from { opacity:.12; transform:translate3d(-16px,-32px,0); filter:blur(6px) }
+ to { opacity:1; transform:translateZ(0); filter:blur(0) }
+}
+@keyframes emonNameFilled {
+ from {opacity:0; transform:translate3d(22px,45px,0) skewY(5deg);filter:blur(6px)}
+ to {opacity:1;transform:translateZ(0) skewY(0);filter:blur(0)}
+}
+@keyframes emonPortraitStage {
+ from {opacity:.05;transform:translate3d(-50%,95px,0) scale(.9);filter:grayscale(1) blur(12px)}
+ to {opacity:1;transform:translate3d(-50%,var(--portrait-drift,0px),0) scale(1);filter:grayscale(1) blur(0)}
+}
+@keyframes emonIntroSlide {
+ from {opacity:.05;transform:translate3d(0,40px,0)}
+ to {opacity:1;transform:translateZ(0)}
+}
+@keyframes emonSectionLift {
+ from {opacity:.18;transform:translate3d(0,72px,0);filter:blur(5px)}
+ to {opacity:1;transform:translateZ(0);filter:blur(0)}
+}
+@keyframes emonCardArrive {
+ from {opacity:.14;transform:perspective(900px) translate3d(0,95px,0) rotateX(9deg) scale(.94);filter:blur(5px)}
+ to {opacity:1;transform:perspective(900px) translateZ(0) rotateX(0) scale(1);filter:blur(0)}
+}
+@keyframes emonScrollHint {
+ 0%,100% {transform:translateY(-2px)} 50% {transform:translateY(8px)}
+}
+@keyframes emonArrowNudge {
+ 0%,100% {transform:translate(0,0)}50% {transform:translate(4px,-4px)}
+}
+@media(prefers-reduced-motion:no-preference){
+ .hero-heading .outline,.hero-heading .filled{display:inline-block}
+ .hero-heading .outline{animation:emonNameOutline 1.05s .08s both cubic-bezier(.2,.75,.25,1)}
+ .hero-heading .filled{animation:emonNameFilled 1.18s .28s both cubic-bezier(.2,.75,.25,1)}
+ .hero-img{animation:emonPortraitStage 1.45s .22s both cubic-bezier(.2,.75,.25,1)}
+ .hero-sub{animation:emonIntroSlide 1s .62s both cubic-bezier(.2,.75,.25,1)}
+ .hero-social{animation:emonIntroSlide .95s .85s both cubic-bezier(.2,.75,.25,1)}
+ .hero-bottom{animation:emonIntroSlide .85s 1.08s both cubic-bezier(.2,.75,.25,1)}
+ .scroll-cue span{animation:emonScrollHint 1.5s ease-in-out infinite}
+ .motion-enabled .reveal.visible{animation:none}
+ .motion-enabled .reveal.animate-now{animation:emonSectionLift 1.06s var(--motion-delay,0ms) both cubic-bezier(.19,.9,.3,1)}
+ .motion-enabled .work-card.animate-now{animation:emonCardArrive 1.15s var(--motion-delay,0ms) both cubic-bezier(.18,.8,.25,1)}
+ .motion-enabled .service-rows.animate-now,.motion-enabled .exp-list.animate-now{animation:emonSectionLift 1.03s both cubic-bezier(.2,.75,.25,1)}
+ .section-head.animate-now .section-title{animation:emonNameFilled 1s .08s both cubic-bezier(.2,.75,.25,1)}
+ .work-card:hover .round-arrow{animation:emonArrowNudge .7s infinite ease-in-out}
+ .work-visual .mini-ui,.work-visual .mini-paper{transition:transform .65s cubic-bezier(.2,.75,.25,1)}
+ .work-card:hover .mini-ui{transform:rotate(-1deg) scale(1.035)}
+ .work-card:hover .mini-paper{transform:rotate(-2deg) translateY(-8px)}
+ .skill-tag{transition:transform .35s,border-color .35s,background-color .35s}
+ .skill-tag:hover{transform:translateY(-5px);background:#272727;border-color:#9fd263}
+}
+@media(max-width:680px) and (prefers-reduced-motion:no-preference){
+ .hero-heading .filled{display:block}
+ .motion-enabled .work-card.animate-now{animation-duration:.95s}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-heading .outline,.hero-heading .filled,.hero-img,.hero-sub,.hero-social,.hero-bottom,
+ .motion-enabled .reveal.animate-now,.motion-enabled .work-card.animate-now{animation:none!important}
+ .hero-img{transform:translateX(-50%)}
+}
