@@ -1,85 +1,70 @@
-name: Publish complete animated portfolio
+name: Publish animated portfolio
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/publish-portfolio.yml']
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'projects/**'
+      - 'resume/**'
+      - '.github/workflows/publish-portfolio.yml'
   workflow_dispatch:
+
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: emon-portfolio-deploy
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Restore homepage and all four working projects
+      - name: Checkout completed site
+        uses: actions/checkout@v4
+
+      - name: Validate homepage, animations and project files
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import zipfile, json, gzip, base64
-          src=Path('emon_animated_portfolio_ready.zip')
-          if not src.is_file(): raise SystemExit('Portfolio archive not found in repository')
-          out=Path('_built_portfolio')
-          out.mkdir(exist_ok=True)
-          with zipfile.ZipFile(src) as z:
-              for item in z.infolist():
-                  if item.is_dir(): continue
-                  path=Path(item.filename)
-                  if len(path.parts)<2 or path.parts[0]!='emon_animated_portfolio' or '..' in path.parts:
-                      raise SystemExit('Unexpected file in portfolio archive: '+str(path))
-                  dest=out.joinpath(*path.parts[1:])
-                  dest.parent.mkdir(parents=True,exist_ok=True)
-                  dest.write_bytes(z.read(item))
-          fixes=json.loads(gzip.decompress(base64.b64decode('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')))
-          for name,edits in fixes.items():
-              p=out/name
-              b=bytearray(p.read_bytes())
-              for start,stop,replacement in reversed(edits):
-                  b[start:stop]=base64.b64decode(replacement)
-              p.write_bytes(b)
-          (out/'.nojekyll').touch()
-          (out/'404.html').write_text(
-              '<!doctype html><html lang="en"><meta charset="utf-8">'
-              '<meta name="viewport" content="width=device-width,initial-scale=1">'
-              '<title>Page Not Found | MD Emon Hossain</title>'
-              '<main style="font:20px Arial;max-width:560px;margin:14vh auto;padding:24px">'
-              '<h1>Page not found</h1><p>Return to the main portfolio to see my projects.</p>'
-              '<a href="/emon-animated-portfolio-/">Back to portfolio</a></main></html>',encoding='utf-8')
-          (out/'README.md').write_text(
-              '# MD Emon Hossain | Animated Portfolio\n\n'
-              'Professional English-language portfolio with four functional browser projects.\n'
-              'Includes CSV quality auditor, employee records manager, monthly reporting dashboard and document formatting studio.\n'
-              'These are independent portfolio projects, not claims of previous paid client work.\n'
-              'Published at https://mdemonimt.github.io/emon-animated-portfolio-/\n',encoding='utf-8')
-          essential=['index.html','assets/styles.css','assets/site.js','assets/common.js',
-                     'assets/emon-portrait.png','resume/MD_EMON_HOSSAIN_CV.pdf']
-          essential += ['projects/'+p+'/index.html' for p in
-                       ['records-manager','reporting-dashboard','data-quality-auditor','document-studio']]
-          assert all((out/p).is_file() for p in essential), 'Missing required portfolio files'
-          assert 'MD EMON HOSSAIN' in (out/'index.html').read_text(encoding='utf-8')
-          assert 'reliable scroll reveals: never hide' in (out/'assets/styles.css').read_text()
-          print('Validated complete site:',len(list(out.rglob('*'))),'entries')
+          required = [
+            'index.html', 'assets/styles.css', 'assets/site.js',
+            'assets/common.js', 'assets/emon-portrait.png',
+            'resume/MD_EMON_HOSSAIN_CV.pdf',
+            'projects/records-manager/index.html',
+            'projects/reporting-dashboard/index.html',
+            'projects/data-quality-auditor/index.html',
+            'projects/document-studio/index.html'
+          ]
+          missing=[p for p in required if not Path(p).is_file()]
+          if missing: raise SystemExit('Missing files: ' + ', '.join(missing))
+          html=Path('index.html').read_text(encoding='utf-8')
+          css=Path('assets/styles.css').read_text(encoding='utf-8')
+          js=Path('assets/site.js').read_text(encoding='utf-8')
+          assert 'MD EMON HOSSAIN' in html
+          assert 'Animated portfolio v2: cinematic motion' in css
+          assert 'animate-now' in js
+          print('Portfolio HTML, animation assets and four projects verified')
           PY
-      - name: Synchronize public website sources to main
-        shell: bash
-        run: |
-          cp -a _built_portfolio/. .
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html 404.html README.md .nojekyll assets projects resume
-          if ! git diff --cached --quiet; then
-            git commit -m "Restore and publish the complete animated portfolio website"
-            git push origin HEAD:main
-          fi
+          mkdir -p _site
+          cp index.html .nojekyll 404.html _site/
+          cp -a assets projects resume _site/
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload built pages
+
+      - name: Upload validated site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: _built_portfolio
+          path: _site
+
       - name: Deploy GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
