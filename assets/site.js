@@ -1,87 +1,134 @@
-// Enhanced animated portfolio: accessible scroll reveals, mobile navigation and gentle parallax.
+// Replay portfolio animations whenever elements re-enter the viewport.
 (() => {
   'use strict';
+
   const root = document.documentElement;
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let hasMotion = !motionPreference.matches;
-  if (hasMotion) root.classList.add('motion-enabled');
+  let canAnimate = !motionPreference.matches;
+  root.classList.toggle('motion-enabled', canAnimate);
 
   document.addEventListener('DOMContentLoaded', () => {
     root.dataset.portfolioInit = 'ready';
-    const mobile = document.querySelector('.nav-mobile');
+
+    const mobileButton = document.querySelector('.nav-mobile');
     const nav = document.querySelector('.navlinks');
-    if (mobile && nav) {
-      mobile.addEventListener('click', () => {
-        const open = nav.classList.toggle('open');
-        mobile.setAttribute('aria-expanded', String(open));
-        mobile.textContent = open ? 'Close ✕' : 'Menu ☰';
+    if (mobileButton && nav) {
+      mobileButton.addEventListener('click', () => {
+        const opened = nav.classList.toggle('open');
+        mobileButton.setAttribute('aria-expanded', String(opened));
+        mobileButton.textContent = opened ? 'Close ✕' : 'Menu ☰';
       });
-      nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
         nav.classList.remove('open');
-        mobile.textContent = 'Menu ☰';
-        mobile.setAttribute('aria-expanded', 'false');
+        mobileButton.textContent = 'Menu ☰';
+        mobileButton.setAttribute('aria-expanded', 'false');
       }));
     }
 
-    const sections = document.querySelectorAll('.reveal');
-    const show = (el) => {
+    const sections = [...document.querySelectorAll('.reveal')];
+    const workCards = [...document.querySelectorAll('.work-card')];
+    const hero = document.querySelector('.hero');
+    const portrait = document.querySelector('.hero-img');
+
+    function enter(el) {
       if (el.classList.contains('visible')) return;
       el.classList.add('visible');
-      if (!hasMotion) return;
+      if (!canAnimate) return;
       if (el.classList.contains('work-card')) {
-        const cards = [...document.querySelectorAll('.work-card')];
-        el.style.setProperty('--motion-delay', String((cards.indexOf(el) % 2) * 220) + 'ms');
+        el.style.setProperty('--motion-delay', ((workCards.indexOf(el) % 2) * 220) + 'ms');
       }
+      // Removing the running animation before re-entry makes it replay each time.
+      el.classList.remove('animate-now');
+      void el.offsetWidth;
       el.classList.add('animate-now');
-      el.addEventListener('animationend', (e) => {
-        if (e.target === el) el.classList.remove('animate-now');
-      }, { once: true });
-    };
+    }
+
+    function exit(el) {
+      // Content stays visible because CSS never hides an unanimated .reveal.
+      // Clear BOTH classes so scrolling back into view triggers the animation again.
+      el.classList.remove('animate-now', 'visible');
+    }
+
     if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(entries => {
+      const sectionObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            show(entry.target);
-            observer.unobserve(entry.target);
-          }
+          if (entry.isIntersecting) enter(entry.target);
+          else exit(entry.target);
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -3% 0px' });
-      sections.forEach(el => observer.observe(el));
-    } else sections.forEach(show);
+      }, { threshold: 0, rootMargin: '-5% 0px -9% 0px' });
+      sections.forEach(section => sectionObserver.observe(section));
 
-    document.querySelectorAll('.service-item').forEach(d => d.addEventListener('toggle', () => {
-      if (d.open) document.querySelectorAll('.service-item').forEach(other => {
-        if (other !== d) other.open = false;
+      if (hero) {
+        const heroObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            hero.classList.toggle(
+              'motion-replay',
+              canAnimate && entry.intersectionRatio >= 0.25
+            );
+          });
+        }, { threshold: [0, 0.25, 0.5] });
+        heroObserver.observe(hero);
+      }
+    } else {
+      sections.forEach(enter);
+      hero?.classList.toggle('motion-replay', canAnimate);
+    }
+
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('toggle', () => {
+        if (item.open) {
+          document.querySelectorAll('.service-item').forEach(other => {
+            if (other !== item) other.open = false;
+          });
+        }
       });
-    }));
-    document.getElementById('year')?.replaceChildren(document.createTextNode(String(new Date().getFullYear())));
+    });
 
-    const portrait = document.querySelector('.hero-img');
+    document.getElementById('year')?.replaceChildren(
+      document.createTextNode(String(new Date().getFullYear()))
+    );
+
     let ticking = false;
-    const updateScroll = () => {
+    function updatePortrait() {
       ticking = false;
-      if (!portrait || !hasMotion || window.scrollY > 850) return;
-      portrait.style.setProperty('--portrait-drift', String(Math.round(Math.max(0,window.scrollY) * 0.14)) + 'px');
-    };
+      if (!portrait || !canAnimate) return;
+      const scroll = Math.max(0, window.scrollY);
+      if (scroll < 850) {
+        portrait.style.setProperty('--portrait-drift', Math.round(scroll * 0.14) + 'px');
+      } else {
+        portrait.style.removeProperty('--portrait-drift');
+      }
+    }
+
     window.addEventListener('scroll', () => {
-      if (!ticking && hasMotion) {
+      if (!ticking && canAnimate) {
         ticking = true;
-        requestAnimationFrame(updateScroll);
+        window.requestAnimationFrame(updatePortrait);
       }
     }, { passive: true });
 
-    const preferenceChanged = () => {
-      hasMotion = !motionPreference.matches;
-      root.classList.toggle('motion-enabled', hasMotion);
-      if (!hasMotion) {
-        sections.forEach(el => el.classList.remove('animate-now'));
+    function onMotionChange() {
+      canAnimate = !motionPreference.matches;
+      root.classList.toggle('motion-enabled', canAnimate);
+      if (!canAnimate) {
+        hero?.classList.remove('motion-replay');
         portrait?.style.removeProperty('--portrait-drift');
+        sections.forEach(section => section.classList.remove('animate-now'));
+      } else {
+        // Re-arm only the animations already in view without hiding content.
+        sections.filter(el => el.classList.contains('visible')).forEach(el => {
+          exit(el);
+          enter(el);
+        });
+        if (hero && hero.getBoundingClientRect().bottom > window.innerHeight * 0.25) {
+          hero.classList.add('motion-replay');
+        }
       }
-    };
+    }
     if (typeof motionPreference.addEventListener === 'function') {
-      motionPreference.addEventListener('change', preferenceChanged);
+      motionPreference.addEventListener('change', onMotionChange);
     } else if (typeof motionPreference.addListener === 'function') {
-      motionPreference.addListener(preferenceChanged);
+      motionPreference.addListener(onMotionChange);
     }
   });
 })();
