@@ -41,7 +41,13 @@ jobs:
             'projects/records-manager/index.html',
             'projects/reporting-dashboard/index.html',
             'projects/data-quality-auditor/index.html',
-            'projects/document-studio/index.html'
+            'projects/document-studio/index.html',
+            'projects/index.html',
+            'webild-stage/assets/index-B0UAL4Xi.js',
+            'webild-stage/assets/HomePage-Dbyn_WWS.js',
+            'webild-stage/assets/NudgeFrame-DaCJukSj.js',
+            'webild-stage/assets/index-zM5fJp71.css',
+            'webild-stage/favicon.svg'
           ]
           missing=[p for p in required if not Path(p).is_file()]
           if missing: raise SystemExit('Missing files: ' + ', '.join(missing))
@@ -49,13 +55,16 @@ jobs:
           css=Path('assets/styles.css').read_text(encoding='utf-8')
           js=Path('assets/site.js').read_text(encoding='utf-8')
           assert 'MD EMON HOSSAIN' in html
-          assert 'Animated portfolio v2: cinematic motion' in css
-          assert 'animate-now' in js
+          assert 'webild-stage/assets/index-B0UAL4Xi.js' in html
+          assert 'webild-stage/assets/index-zM5fJp71.css' in html
+          assert 'Webild' in html or 'webild' in html
+          assert 'data-section="testimonial"' in html
           print('Portfolio HTML, animation assets and four projects verified')
           PY
           mkdir -p _site
           cp index.html .nojekyll 404.html _site/
           cp -a assets projects resume _site/
+          cp -a webild-stage _site/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
