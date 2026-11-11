@@ -173,6 +173,36 @@ footer p.s{max-width:34rem;opacity:.75;line-height:1.55;margin-bottom:2rem}
  footer .big{font-size:3.4rem}#menu nav a{font-size:2.6rem}#menu .brand{left:1.2rem}.close{right:1.2rem}.legal{flex-direction:column;gap:.5rem}.mbox{padding:1.5rem}.mbox h2{font-size:2.2rem}.langs{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}.js .mask>span,.js .rise,.portrait{opacity:1!important;transform:none!important}.portrait{transform:translateX(-50%)!important}}
+
+/* Face-safe portrait placement for all screen sizes, without changing the original image */
+.portrait{
+  left:55%;
+  bottom:0;
+  width:min(40%,31rem);
+  height:82%;
+  max-height:none;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+.portrait img{
+  display:block;
+  width:auto;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center bottom;
+}
+@media (min-width:1024px) and (max-height:660px){
+  .portrait{height:78%}
+}
+@media (max-width:1023px){
+  .portrait{left:55%;width:min(60%,30rem);height:69%}
+}
+@media (max-width:640px){
+  .portrait{left:67%;top:17%;bottom:auto;width:70%;height:52%}
+}
 </style>
 </head>
 <body>
@@ -382,7 +412,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{const t=e.target;
 const watch=()=>$$('.rise,.r,#stage').forEach(el=>io.observe(el));
 
 /* parallax */
-const onScroll=()=>{if(reduce)return;const y=scrollY;$('#grid').style.transform=`translateY(${y*.15}px)`;$('#portrait').style.setProperty('--py',-y*.06);
+const onScroll=()=>{if(reduce)return;const y=scrollY;$('#grid').style.transform=`translateY(${y*.15}px)`;$('#portrait').style.setProperty('--py',-y*.035);
   const r=$('#stage').getBoundingClientRect(),p=(innerHeight/2-r.top-r.height/2)*.08;$$('#ghosts>div').forEach((d,i)=>d.style.transform=`translateX(${i%2?-p:p}px)`)};
 addEventListener('scroll',onScroll,{passive:true});
 
