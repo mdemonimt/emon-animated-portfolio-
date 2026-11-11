@@ -9,7 +9,6 @@
 <meta property="og:description" content="Excel, data quality, reporting and e-commerce catalog data. Ha'il, Saudi Arabia.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mdemonimt.github.io/emon-animated-portfolio-/">
-<meta property="og:image" content="https://mdemonimt.github.io/emon-animated-portfolio-/assets/emon-portrait.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap" rel="stylesheet">
@@ -174,35 +173,29 @@ footer p.s{max-width:34rem;opacity:.75;line-height:1.55;margin-bottom:2rem}
 }
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}.js .mask>span,.js .rise,.portrait{opacity:1!important;transform:none!important}.portrait{transform:translateX(-50%)!important}}
 
-/* Face-safe portrait placement for all screen sizes, without changing the original image */
-.portrait{
-  left:55%;
-  bottom:0;
-  width:min(40%,31rem);
-  height:82%;
-  max-height:none;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-}
-.portrait img{
-  display:block;
-  width:auto;
-  height:100%;
-  max-width:100%;
-  max-height:100%;
-  object-fit:contain;
-  object-position:center bottom;
-}
-@media (min-width:1024px) and (max-height:660px){
-  .portrait{height:78%}
-}
+
+/* Photo-free editorial hero: type-forward composition */
+.hero{background:radial-gradient(55% 85% at 54% 35%,rgba(87,144,230,.28),transparent 72%),linear-gradient(150deg,#0f2f63,#081936 88%)}
+.hero .hname{top:20%;font-size:clamp(4rem,10.4vw,12.6rem);line-height:.95;letter-spacing:-.045em;z-index:2}
+.hero .hname .mask{overflow:visible;padding-bottom:.13em}
+.hero .hname .mask:nth-child(2){-webkit-text-stroke:1.4px rgba(255,255,255,.85)}
+.hero .hcopy{left:3.2rem;bottom:3rem;max-width:min(41%,31rem)}
+.hero .hcards{right:3.2rem;bottom:3rem;width:min(29%,23rem)}
+.hero .hgrid{opacity:.75}
 @media (max-width:1023px){
-  .portrait{left:55%;width:min(60%,30rem);height:69%}
+ .hero .hname{top:20%;font-size:clamp(4rem,13vw,9rem)}
+ .hero .hcopy{left:2rem;bottom:2.5rem;max-width:56%}
+ .hero .hcards{display:flex;right:2rem;bottom:2.5rem;width:34%}
 }
 @media (max-width:640px){
-  .portrait{left:67%;top:17%;bottom:auto;width:70%;height:52%}
+ .hero{min-height:45rem;height:auto;padding-bottom:2rem}
+ .hero header{position:relative}
+ .hero .hname{position:relative;top:auto;left:auto;right:auto;margin:4.5rem 1rem 2rem;text-align:center;font-size:clamp(3.1rem,14.5vw,5.3rem);line-height:.96}
+ .hero .hcopy{position:relative;left:auto;bottom:auto;right:auto;max-width:none;margin:0 1.35rem 2rem}
+ .hero .hcards{position:relative;display:flex;right:auto;bottom:auto;width:auto;margin:0 1.35rem}
+ .hero .hcopy h2{font-size:2rem}
 }
+
 </style>
 </head>
 <body>
@@ -240,7 +233,7 @@ footer p.s{max-width:34rem;opacity:.75;line-height:1.55;margin-bottom:2rem}
     <div class="hright"><button class="btn btn-ghost" data-modal>Let's talk</button><button class="menu-btn" data-menu aria-label="Open menu" aria-expanded="false"><i></i><i></i></button></div>
   </header>
   <h1 class="hname" aria-label="MD Emon Hossain"><span class="mask"><span style="--d:.1s">MD EMON</span></span><span class="mask"><span style="--d:.25s">HOSSAIN</span></span></h1>
-  <div class="portrait" id="portrait"><img src="assets/emon-portrait.png" alt="MD Emon Hossain in a black suit and white shirt"></div>
+  
   <div class="hcopy rise" style="--d:.5s">
     <h2>Data analyst<br>E-commerce</h2><small>EXCEL / DATA QUALITY / REPORTING</small>
     <p>An MBA graduate working with structured business records, data verification, reporting support, and e-commerce catalog information.</p>
@@ -412,7 +405,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{const t=e.target;
 const watch=()=>$$('.rise,.r,#stage').forEach(el=>io.observe(el));
 
 /* parallax */
-const onScroll=()=>{if(reduce)return;const y=scrollY;$('#grid').style.transform=`translateY(${y*.15}px)`;$('#portrait').style.setProperty('--py',-y*.035);
+const onScroll=()=>{if(reduce)return;const y=scrollY;$('#grid').style.transform=`translateY(${y*.15}px)`;
   const r=$('#stage').getBoundingClientRect(),p=(innerHeight/2-r.top-r.height/2)*.08;$$('#ghosts>div').forEach((d,i)=>d.style.transform=`translateX(${i%2?-p:p}px)`)};
 addEventListener('scroll',onScroll,{passive:true});
 
