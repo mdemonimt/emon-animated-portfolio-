@@ -1,0 +1,15 @@
+{
+  "source": "https://storage.googleapis.com/webild/previews/5f7a624e-fe6f-4528-92b0-b23d21dcc273/index.html",
+  "html_bytes": 2802,
+  "downloaded": {
+    "assets/NudgeFrame-DaCJukSj.js": 141090,
+    "assets/index-zM5fJp71.css": 66364,
+    "favicon.svg": 9522,
+    "assets/index-B0UAL4Xi.js": 334696
+  },
+  "other_references": [
+    "https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    "https://fonts.googleapis.com",
+    "https://fonts.gstatic.com"
+  ]
+}
