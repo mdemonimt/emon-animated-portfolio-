@@ -68,6 +68,17 @@ jobs:
                           pending.append(urljoin(u,v))
               except Exception as exc:
                   skipped.append(u+' ERROR '+str(exc))
+          # Vite dynamic import required for the actual Webild homepage.
+          for relative in ['assets/HomePage-Dbyn_WWS.js']:
+              try:
+                  body=get(base+relative)
+                  dest=root/relative
+                  dest.parent.mkdir(parents=True,exist_ok=True)
+                  dest.write_bytes(body)
+                  downloaded[relative]=len(body)
+                  print('Downloaded lazy-loaded homepage:', relative, len(body))
+              except Exception as exc:
+                  raise SystemExit('The Webild homepage chunk is required: '+str(exc))
           (root/'import-manifest.json').write_text(json.dumps({'source':base+'index.html','html_bytes':len(html),'downloaded':downloaded,'other_references':skipped[:80]},indent=2),encoding='utf-8')
           print('Imported same-folder assets:',len(downloaded),'External/missing refs:',len(skipped))
           PY
